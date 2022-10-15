@@ -12,6 +12,7 @@
 </head>
 
 <body style="background-color: #DEDEDE;" onload="atualizarContatos()">
+  
     <section class="row mt-5">
         <div class="col-md-4 offset-md-4">
             <div class="card card-body">
@@ -19,7 +20,7 @@
                 <hr>
 
                 <form id="form" action="" class="row" onsubmmit="addContact()">
-                    <div class="col-9">
+                    <div class="col-4">
                         <input id="nome" placeholder="Nome do contato" type="text" class="form-control">
                         <input id="idade" placeholder="Idade do contato" type="number" class="form-control">
                     </div>
@@ -32,7 +33,10 @@
                 </form>
 
                 <hr>
-
+                <section id="atualizacaoCard" class="col-md-4 offset-md-4" class="card card-body">
+        
+       
+                </section>
                 <div>
                     <ul id="contatos">
 
@@ -42,17 +46,7 @@
             </div>
         </div>
     </section>
-    <section id="atualizacaoCard" class="col-md-4 offset-md-4" class="card card-body">
-        
-        </div>
-            <input id="novoNome" placeholder="Novo Nome" type="text" />
-            <input id="novaIdade" placeholder="Nova Idade" type="number" />
-        <div>
-        <div>
-            <button onclick="atualizarPessoa()">Atualizar</button>
-            <button onclick="cancelarCard()">Cancelar</button>
-        </div>  
-    </section>
+    
 
 
     <script src="eventos.js"></script>
