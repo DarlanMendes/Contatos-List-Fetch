@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
@@ -13,16 +13,16 @@
 
 <body style="background-color: #DEDEDE;" onload="atualizarContatos()">
   
-    <section class="row mt-5">
+    <section class="row mt-5 col-12">
         <div class="col-md-4 offset-md-4">
             <div class="card card-body">
                 <h2>Lista de contatos (<span id="numeros">0</span>) </h2>
                 <hr>
 
-                <form id="form" action="" class="row" onsubmmit="addContact()">
-                    <div class="col-4">
-                        <input id="nome" placeholder="Nome do contato" type="text" class="form-control">
-                        <input id="idade" placeholder="Idade do contato" type="number" class="form-control">
+                <form id="form" action="" class="d-flex flex-column" onsubmmit="addContact()">
+                    <div class="col-6 d-flex">
+                        <input id="nome" placeholder="Nome do contato" type="text" class="form-control col-1">
+                        <input id="telefone" placeholder="Telefone de contato" type="number" class="form-control col-1">
                     </div>
 
                     <div class="col-3 d-grid">
@@ -33,8 +33,18 @@
                 </form>
 
                 <hr>
-                <section id="atualizacaoCard" class="col-md-4 offset-md-4" class="card card-body">
-        
+                <section id="atualizacaoCard" class="col-md-4 offset-md-4 " class="card card-body">
+                    <div class="d-flex position-fixed bg-white mt-5 h-25 p-5 border-dark">
+
+                        <div>
+                            <input id='novoNome' placeholder='Novo Contato' class='rounded mb-1' type='text' /> 
+                            <input id='novoTelefone' placeholder='Novo Telefone' class='rounded mb-1'type='text'/>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <button class="bg-success rounded m-2" onclick='atualizarPessoa(id_pessoa)'><i class="fa-solid fa-upload text-white"></i></button>
+                            <button class="bg-danger rounded" onclick='cancelarCard()'><i class="fa-solid fa-xmark text-white"></i></button>
+                        </div>
+                    </div>
        
                 </section>
                 <div>
@@ -47,9 +57,14 @@
         </div>
     </section>
     
-
+    <section id="login">
+        <div>
+            <input type="text">
+        </div>
+    </section>
 
     <script src="eventos.js"></script>
+    <script src="https://kit.fontawesome.com/c0b4ff0b50.js" crossorigin="anonymous"></script>
 </body>
 
 </html>
