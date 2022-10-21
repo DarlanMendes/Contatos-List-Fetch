@@ -4,7 +4,7 @@ let listaContatos;
 
 
 let url = 'https://634ab69d33bb42dca4099305.mockapi.io/contact'
-
+atualizacaoCard.style = "display:none!important";
 const fazerLogin = () => {
     if (email.value && senha.value) {
         console.log('teste')
@@ -20,7 +20,14 @@ const fazerLogin = () => {
     }
 
 }
+const logout=()=>{
+    localStorage.setItem('usuarioLogado',false);
+    window.location ='login.html';
+}
 const addContact = async () => {
+    atualizacaoCard.style="display:flex";
+    atualizacaoCard.innerHTML = '<h3>Salvando contato...</h3>';
+    telaListaContatos.style = "opacity:75%!important"
     let resultado = await fetch(url,
         {
             method: 'POST',
@@ -32,6 +39,8 @@ const addContact = async () => {
         }
 
     );
+    telaListaContatos.style = "opacity:100%!important"
+    atualizacaoCard.style="display:none!important";
     nome.value = '';
     telefone.value = '';
     console.log(resultado.statusText);
@@ -61,12 +70,14 @@ const atualizarContatos = () => {
         })
 }
 const editarPessoa = (linha) => {
+    telaListaContatos.style = "opacity:50%!important"
     atualizacaoCard.style = "display:flex!important"
-    atualizacaoCard.innerHTML ="<div class='d-flex position-fixed bg-white mt-5 h-25 p-5 border-dark'><div><input id='novoNome' placeholder='Novo Contato' value='" + listaContatos[linha].nome + "' class='rounded mb-1' type='text' /> <input id='novoTelefone' placeholder='Novo Telefone' value='" + listaContatos[linha].telefone + "'class='rounded mb-1'type='text'/></div><div class='d-flex align-items-center justify-content-center'><button class='bg-success rounded m-2' onclick='atualizarPessoa(" + listaContatos[linha].id + ")'><i class='fa-solid fa-upload text-white'></i></button><button class='bg-danger rounded' onclick='cancelarCard()'><i class='fa-solid fa-xmark text-white'></i></button></div></div>"
+    atualizacaoCard.innerHTML ="<div id= 'cardEdicao' class='d-flex flex-column position-fixed align-items-center justify-content-center rounded opacity-100 zindex-6 bg-white mt-5 h-25 p-5 border-dark'><h4>Edite seu contato:</h4><div class='d-flex flex-column justify-content-center'><input id='novoNome' placeholder='Novo Contato' value='" + listaContatos[linha].nome + "' class='rounded mb-1' type='text' /> <input id='novoTelefone' placeholder='Novo Telefone' value='" + listaContatos[linha].telefone + "'class='rounded mb-1'type='text'/></div><div class='d-flex align-items-center justify-content-center'><button class='bg-success rounded m-2' onclick='atualizarPessoa(" + listaContatos[linha].id + ")'>Salvar<i class='fa-solid fa-upload text-white'></i></button><button class='bg-danger rounded' onclick='cancelarCard()'>Cancelar<i class='fa-solid fa-xmark text-white'></i></button></div></div>"
    
 }
 const cancelarCard = () => {
     atualizacaoCard.style = "display:none!important";
+    telaListaContatos.style = "opacity:100%!important"
 }
 
 const deletarPessoa = async (id_pessoa) => {
@@ -80,6 +91,10 @@ const deletarPessoa = async (id_pessoa) => {
     atualizarContatos();
 }
 const atualizarPessoa = async (id_pessoa) => {
+    let nome= novoNome;
+    let telefone = novoTelefone;
+    console.log(nome,telefone)
+    atualizacaoCard.innerHTML = '<h3>Salvando contato...</h3>';
     console.log('id pessoa', id_pessoa)
     let atualizado = await fetch(url + "/" + id_pessoa,
         {
@@ -89,12 +104,15 @@ const atualizarPessoa = async (id_pessoa) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                nome: novoNome.value, telefone: novoTelefone.value
+                nome: nome.value, telefone: telefone.value
             })
         }
-
+       
     )
-    atualizacaoCard.style = "display:none";
+  
+    console.log("Deu certo")
+    atualizacaoCard.style = "display:none!important";
+    telaListaContatos.style = "opacity:100%!important"
     contatos.innerHTML = 'Atualizando...'
     console.log(atualizado);
 
