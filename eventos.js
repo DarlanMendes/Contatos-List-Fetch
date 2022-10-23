@@ -1,15 +1,19 @@
 //let url='https://633867b7937ea77bfdbf9c86.mockapi.io/pessoa';
 let listaContatos;
-let favoritos;
-let listaContatosFiltrado;
-if(localStorage.getItem('listaContatos')){
-    listaContatos=JSON.parse(localStorage.getItem('listaContatos'));
- }
+let favoritos=[];
+let listaContatosFiltrado = [];
+if (localStorage.getItem('listaContatos')) {
+    listaContatos = JSON.parse(localStorage.getItem('listaContatos'));
+}
 if (localStorage.getItem('favoritos')) {
     favoritos = JSON.parse(localStorage.getItem('favoritos'));
-    console.log(favoritos)
-}else{
-    favoritos=[]
+} else {
+    favoritos = []
+}
+if (localStorage.getItem('listaContatosFiltrado')) {
+    listaContatosFiltrado = JSON.parse(localStorage.getItem('listaContatosFiltrado'));
+} else {
+    listaContatosFiltrado = []
 }
 
 let url = 'https://634ab69d33bb42dca4099305.mockapi.io/contact'
@@ -72,111 +76,89 @@ const atualizarContatos = () => {
         then(resposta => resposta.json()).
         then(body => {
             listaContatos = body;
-            console.log(!localStorage.getItem('listaContatos'))
-            if(!localStorage.getItem('listaContatos')){
-                localStorage.setItem('listaContatos',JSON.stringify(listaContatos))
+
+            localStorage.setItem('listaContatos', JSON.stringify(listaContatos))
+            if (listaContatos !== JSON.parse(localStorage.getItem('listaContatos'))) {
+                console.log('entrou')
+                listaContatosFiltrado = listaContatos
+
+            } else {
+                listaContatosFiltrado = JSON.parse(localStorage.getItem('listaContatosFavorito'))
             }
-            console.log(listaContatos)
-            filtrarListaContatos()
+            if (!listaContatosFiltrado) {
+                listaContatosFiltrado = listaContatos
+
+            }
+
+            filtrarListaContatos();
             renderizaContatos();
             rederizaFavoritos()
         })
 }
 const renderizaContatos = () => {
+    listaContatosFiltrado = JSON.parse(localStorage.getItem('listaContatosFiltrado'))
     conteudoHtml = '';
-    
+    listaContatosFiltrado.forEach((contato, index) => {
 
-        listaContatosFiltrado.forEach((contato, index) => {
-                
-                    conteudoHtml += `<li class='d-flex flex-column justify-content-between'>
+        conteudoHtml += `<li class='d-flex flex-column justify-content-between'>
                     <h4> ${contato.nome} </h4> ${contato.telefone}
                     <div > 
                         <button class='bg-danger rounded text-white' onclick='deletarPessoa(${contato.id})'><i class='fa-solid fa-trash' class='botao'></i></button>
                         <button class='bg-warning rounded text-white' onclick='favoritarPessoa(${index} )'><i class='fa-solid fa-star'class='botao'></i></button>
-                        <button class='bg-primary rounded text-white' onclick='editarPessoa(${index})'><i class='fa-solid fa-pen' class='botao'></i></button>
+                        <button class='bg-primary rounded text-white' onclick='editarPessoaContato(${contato.id},"contato")'><i class='fa-solid fa-pen' class='botao'></i></button>
                     </div>
                     <hr>
                 </li>`
-                
-        })
-   
+    })
     contatos.innerHTML = conteudoHtml
 }
 
 const favoritarPessoa = (indice) => {
-    let contato =listaContatosFiltrado[indice]
-   favoritos.push(contato)
-    console.log(favoritos)
-     filtrarListaContatos(contato)
-     renderizaContatos()
+    let contato = listaContatosFiltrado[indice]
+    if(favoritos===null){
+        favoritos=[]
+    }
+    favoritos.push(contato)
+    localStorage.setItem('favoritos', JSON.stringify(favoritos))
+    filtrarListaContatos()
+    renderizaContatos()
     rederizaFavoritos()
 }
-const filtrarListaContatos=(favoritado)=>{
-    
-    if(favoritos&&favoritos.length>0){
-       let listaFiltrada=listaContatosFiltrado.filter((contato)=>favoritado!==contato);
-       listaContatosFiltrado=listaFiltrada;
-    }else{
-        listaContatosFiltrado=listaContatos;
+const filtrarListaContatos = () => {
+    if (favoritos && favoritos.length > 0) {
+
+        favoritos.forEach((favorito) => {
+
+            listaContatosFiltrado = listaContatosFiltrado.filter(contato => contato.id !== favorito.id)
+
+        })
+    } else {
+        listaContatosFiltrado = listaContatos;
     }
-console.log(listaContatosFiltrado)
-     
+    localStorage.setItem('listaContatosFiltrado', JSON.stringify(listaContatosFiltrado));
 }
+
+
 const desfavoritarPessoa = (indice) => {
-    let favoritosFiltrado = favoritos.filter(teste => teste!==Number(indice) );
-    favoritos = favoritosFiltrado;
-     armazenaFavoritoStorage()
-     rederizaFavoritos()
-     renderizaContatos()
-}
-const armazenaFavoritoStorage = () => {
-    let favoritosStorage = JSON.stringify(favoritos)
-    localStorage.setItem('favoritos', favoritosStorage);
-}
-const rederizaFavoritos = () => {
-    favoritosBox.innerHTML =''
-    favoritos.forEach((contato, index) => {
-                
-        favoritosBox.innerHTML += `<li class='d-flex flex-column justify-content-between'>
-        <h4> ${contato.nome} </h4> ${contato.telefone}
-        <div > 
-            <button class='bg-danger rounded text-white' onclick='deletarPessoa(${contato.id})'><i class='fa-solid fa-trash' class='botao'></i></button>
-            <button class='bg-warning rounded text-white' onclick='favoritarPessoa(${index} )'><i class='fa-solid fa-star'class='botao'></i></button>
-            <button class='bg-primary rounded text-white' onclick='editarPessoa(${index})'><i class='fa-solid fa-pen' class='botao'></i></button>
-        </div>
-        <hr>
-    </li>`
-    
-})
-
-}
-const editarPessoa = (linha) => {
-    telaListaContatos.style = "opacity:50%!important"
-    atualizacaoCard.style = "display:flex!important"
-    atualizacaoCard.innerHTML = "<div id= 'cardEdicao' class='d-flex flex-column position-fixed align-items-center justify-content-center rounded opacity-100 zindex-6 bg-white mt-5 h-25 p-5 border-dark'><h4>Edite seu contato:</h4><div class='d-flex flex-column justify-content-center'><input id='novoNome' placeholder='Novo Contato' value='" + listaContatos[linha].nome + "' class='rounded mb-1' type='text' /> <input id='novoTelefone' placeholder='Novo Telefone' value='" + listaContatos[linha].telefone + "'class='rounded mb-1'type='text'/></div><div class='d-flex align-items-center justify-content-center'><button class='bg-success rounded m-2' onclick='atualizarPessoa(" + listaContatos[linha].id + ")'>Salvar<i class='fa-solid fa-upload text-white'></i></button><button class='bg-danger rounded' onclick='cancelarCard()'>Cancelar<i class='fa-solid fa-xmark text-white'></i></button></div></div>"
-
-}
-const cancelarCard = () => {
-    atualizacaoCard.style = "display:none!important";
-    telaListaContatos.style = "opacity:100%!important"
-}
-
-const deletarPessoa = async (id_pessoa) => {
-    let contatoDeletado = await fetch(url + "/" + id_pessoa,
-        {
-            method: 'DELETE'
-        }
-
-    )
-    console.log(id_pessoa, contatoDeletado);
-    atualizarContatos();
+    listaContatosFiltrado.push(favoritos[indice])
+    localStorage.setItem('listaContatosFiltrado', JSON.stringify(listaContatosFiltrado));
+    favoritos.splice(indice, 1)
+    localStorage.setItem('favoritos', JSON.stringify(favoritos));
+    filtrarListaContatos()
+    rederizaFavoritos()
+    renderizaContatos()
 }
 const atualizarPessoa = async (id_pessoa) => {
     let nome = novoNome;
     let telefone = novoTelefone;
-    console.log(nome, telefone)
+    let favoritoAtualizado = favoritos.find(o => Number(o.id) === id_pessoa)
+    let indexFav = favoritos.indexOf(favoritoAtualizado)
+    favoritos[indexFav].nome = novoNome.value;
+    favoritos[indexFav].telefone = novoTelefone.value;
+    localStorage.setItem('favoritos', JSON.stringify(favoritos))
+    console.log('test', JSON.parse(localStorage.getItem('favoritos')))
     atualizacaoCard.innerHTML = '<h3>Salvando contato...</h3>';
-    console.log('id pessoa', id_pessoa)
+
     let atualizado = await fetch(url + "/" + id_pessoa,
         {
             method: 'PUT',
@@ -191,16 +173,68 @@ const atualizarPessoa = async (id_pessoa) => {
 
     )
 
-    console.log("Deu certo")
+
     atualizacaoCard.style = "display:none!important";
     telaListaContatos.style = "opacity:100%!important"
-    contatos.innerHTML = 'Atualizando...'
-    console.log(atualizado);
-
-    await atualizarContatos();
-
+    contatos.innerHTML = 'Atualizando...';
+    atualizarContatos()
 
 }
+function rederizaFavoritos() {
+    favoritos = JSON.parse(localStorage.getItem('favoritos'))
+    favoritosBox.innerHTML = ''
+    if (favoritos) {
+        favoritos.forEach((contato, index) => {
+
+            favoritosBox.innerHTML += `<li class='d-flex flex-column justify-content-between'>
+            <h4> ${contato.nome} </h4> ${contato.telefone}
+            <div > 
+                <button class='bg-danger rounded text-white' onclick='deletarPessoa(${contato.id})'><i class='fa-solid fa-trash' class='botao'></i></button>
+                <button class='bg-seconndary rounded text-white' onclick='desfavoritarPessoa(${index} )'><i class='fa-solid fa-star'class='botao'></i></button>
+                <button class='bg-primary rounded text-white' onclick='editarPessoaContato(${contato.id},"favorito")'><i class='fa-solid fa-pen' class='botao'></i></button>
+            </div>
+            <hr>
+        </li>`
+
+
+
+        })
+    }
+}
+const editarPessoaContato = (id, tipo) => {
+    let contatoEditavel;
+    if (tipo === 'contato') {
+        contatoEditavel = listaContatosFiltrado.filter(contato => Number(contato.id) === id)
+    }
+    if (tipo === 'favorito') {
+        contatoEditavel = favoritos.filter(contato => Number(contato.id) === id)
+    }
+    telaListaContatos.style = "opacity:50%!important"
+    atualizacaoCard.style = "display:flex!important"
+    atualizacaoCard.innerHTML = "<div id= 'cardEdicao' class='d-flex flex-column position-fixed align-items-center justify-content-center rounded opacity-100 zindex-6 bg-white mt-5 h-25 p-5 border-dark'><h4>Edite seu contato:</h4><div class='d-flex flex-column justify-content-center'><input id='novoNome' placeholder='Novo Contato' value='" + contatoEditavel[0].nome + "' class='rounded mb-1' type='text' /> <input id='novoTelefone' placeholder='Novo Telefone' value='" + contatoEditavel[0].telefone + "'class='rounded mb-1'type='text'/></div><div class='d-flex align-items-center justify-content-center'><button class='bg-success rounded m-2' onclick='atualizarPessoa(" + id + ")'>Salvar<i class='fa-solid fa-upload text-white'></i></button><button class='bg-danger rounded' onclick='cancelarCard()'>Cancelar<i class='fa-solid fa-xmark text-white'></i></button></div></div>"
+}
+const cancelarCard = () => {
+    atualizacaoCard.style = "display:none!important";
+    telaListaContatos.style = "opacity:100%!important"
+}
+
+const deletarPessoa = async (id_pessoa) => {
+    let favoritoAtualizado = favoritos.find(o => Number(o.id) === id_pessoa)
+    let indexFav = favoritos.indexOf(favoritoAtualizado)
+    if (indexFav > -1) {
+        favoritos.splice(indexFav, 1);
+    }
+    localStorage.setItem('favoritos', JSON.stringify(favoritos))
+    let contatoDeletado = await fetch(url + "/" + id_pessoa,
+        {
+            method: 'DELETE'
+        }
+
+    )
+    console.log(id_pessoa, contatoDeletado);
+    atualizarContatos();
+}
+
 
 document.getElementById("form").addEventListener("click", (event) => {
     event.preventDefault()
