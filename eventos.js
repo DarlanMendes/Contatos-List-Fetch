@@ -2,12 +2,14 @@
 let listaContatos;
 let favoritos;
 let listaContatosFiltrado;
-//  if(localStorage.getItem('listaContatos')){
-//      listaContatosFiltrado=JSON.parse(localStorage.getItem('listaContatos'));
-//  }
+if(localStorage.getItem('listaContatos')){
+    listaContatos=JSON.parse(localStorage.getItem('listaContatos'));
+ }
 if (localStorage.getItem('favoritos')) {
     favoritos = JSON.parse(localStorage.getItem('favoritos'));
     console.log(favoritos)
+}else{
+    favoritos=[]
 }
 
 let url = 'https://634ab69d33bb42dca4099305.mockapi.io/contact'
@@ -70,61 +72,55 @@ const atualizarContatos = () => {
         then(resposta => resposta.json()).
         then(body => {
             listaContatos = body;
+            console.log(!localStorage.getItem('listaContatos'))
+            if(!localStorage.getItem('listaContatos')){
+                localStorage.setItem('listaContatos',JSON.stringify(listaContatos))
+            }
+            console.log(listaContatos)
+            filtrarListaContatos()
             renderizaContatos();
             rederizaFavoritos()
         })
 }
 const renderizaContatos = () => {
     conteudoHtml = '';
-    if (favoritos) {
+    
 
-        listaContatos.forEach((contato, index) => {
-                console.log(contato.id)
-                if (favoritos[index] !== Number(contato.id)) {
+        listaContatosFiltrado.forEach((contato, index) => {
+                
                     conteudoHtml += `<li class='d-flex flex-column justify-content-between'>
                     <h4> ${contato.nome} </h4> ${contato.telefone}
                     <div > 
                         <button class='bg-danger rounded text-white' onclick='deletarPessoa(${contato.id})'><i class='fa-solid fa-trash' class='botao'></i></button>
-                        <button class='bg-warning rounded text-white' onclick='favoritarPessoa( ${contato.id} )'><i class='fa-solid fa-star'class='botao'></i></button>
+                        <button class='bg-warning rounded text-white' onclick='favoritarPessoa(${index} )'><i class='fa-solid fa-star'class='botao'></i></button>
                         <button class='bg-primary rounded text-white' onclick='editarPessoa(${index})'><i class='fa-solid fa-pen' class='botao'></i></button>
                     </div>
                     <hr>
                 </li>`
-                }
+                
         })
-    }else{
-        listaContatos.forEach((pessoa, index) => {
-                conteudoHtml += `<li class='d-flex flex-column justify-content-between'>
-                        <h4> ${pessoa.nome} </h4> ${pessoa.telefone}
-                        <div > 
-                            <button class='bg-danger rounded text-white' onclick='deletarPessoa(${pessoa.id})'><i class='fa-solid fa-trash' class='botao'></i></button>
-                            <button class='bg-warning rounded text-white' onclick='favoritarPessoa( ${pessoa.id} )'><i class='fa-solid fa-star'class='botao'></i></button>
-                            <button class='bg-primary rounded text-white' onclick='editarPessoa(${index})'><i class='fa-solid fa-pen' class='botao'></i></button>
-                        </div>
-                        <hr>
-                    </li>`
-            })
-    }
-
-
-
+   
     contatos.innerHTML = conteudoHtml
 }
 
 const favoritarPessoa = (indice) => {
-    if(!favoritos){
-        favoritos=[]
-    }
-    favoritos.push(indice);
-    let favoritosStorage = JSON.stringify(favoritos)
-    console.log(favoritos);
-    localStorage.setItem('favoritos', favoritosStorage)
-    filtrarListaContatos(indice)
-    renderizaContatos()
+    let contato =listaContatosFiltrado[indice]
+   favoritos.push(contato)
+    console.log(favoritos)
+     filtrarListaContatos(contato)
+     renderizaContatos()
     rederizaFavoritos()
 }
-const filtrarListaContatos=(indice)=>{
-    listaContatosFiltrado = listaContatos.filter(contato => contato.id !== indice); 
+const filtrarListaContatos=(favoritado)=>{
+    
+    if(favoritos&&favoritos.length>0){
+       let listaFiltrada=listaContatosFiltrado.filter((contato)=>favoritado!==contato);
+       listaContatosFiltrado=listaFiltrada;
+    }else{
+        listaContatosFiltrado=listaContatos;
+    }
+console.log(listaContatosFiltrado)
+     
 }
 const desfavoritarPessoa = (indice) => {
     let favoritosFiltrado = favoritos.filter(teste => teste!==Number(indice) );
@@ -138,25 +134,20 @@ const armazenaFavoritoStorage = () => {
     localStorage.setItem('favoritos', favoritosStorage);
 }
 const rederizaFavoritos = () => {
-    if (favoritos) {
-        favoritosBox.innerHTML = ''
-        listaContatos.forEach((contato, index) => {
-            favoritos.forEach((indice) => {
-                console.log(indice === Number(contato.id));
-                if (indice === Number(contato.id)) {
-                    favoritosBox.innerHTML += `<li class='d-flex flex-column justify-content-between'>
-            <h4> ${contato.nome} </h4> ${contato.telefone}
-            <div > 
-                <button class='bg-danger rounded text-white' onclick='deletarPessoa(${contato.id})'><i class='fa-solid fa-trash' class='botao'></i></button>
-                <button class='bg-secondary rounded text-white' onclick='desfavoritarPessoa( ${contato.id} )'><i class='fa-solid fa-star'class='botao'></i></button>
-                <button class='bg-primary rounded text-white' onclick='editarPessoa(${index})'><i class='fa-solid fa-pen' class='botao'></i></button>
-            </div>
-            <hr>
-        </li>`
-                }
-            })
-        })
-    }
+    favoritosBox.innerHTML =''
+    favoritos.forEach((contato, index) => {
+                
+        favoritosBox.innerHTML += `<li class='d-flex flex-column justify-content-between'>
+        <h4> ${contato.nome} </h4> ${contato.telefone}
+        <div > 
+            <button class='bg-danger rounded text-white' onclick='deletarPessoa(${contato.id})'><i class='fa-solid fa-trash' class='botao'></i></button>
+            <button class='bg-warning rounded text-white' onclick='favoritarPessoa(${index} )'><i class='fa-solid fa-star'class='botao'></i></button>
+            <button class='bg-primary rounded text-white' onclick='editarPessoa(${index})'><i class='fa-solid fa-pen' class='botao'></i></button>
+        </div>
+        <hr>
+    </li>`
+    
+})
 
 }
 const editarPessoa = (linha) => {
