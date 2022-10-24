@@ -1,7 +1,9 @@
 //let url='https://633867b7937ea77bfdbf9c86.mockapi.io/pessoa';
 let listaContatos;
-let favoritos=[];
+let favoritos;
 let listaContatosFiltrado = [];
+let ordemCrescente;
+
 if (localStorage.getItem('listaContatos')) {
     listaContatos = JSON.parse(localStorage.getItem('listaContatos'));
 }
@@ -14,6 +16,11 @@ if (localStorage.getItem('listaContatosFiltrado')) {
     listaContatosFiltrado = JSON.parse(localStorage.getItem('listaContatosFiltrado'));
 } else {
     listaContatosFiltrado = []
+}
+if (localStorage.getItem('ordemCrescente')) {
+    ordemCrescente = JSON.parse(localStorage.getItem('ordemCrescente'))
+} else {
+    ordemCrescente = true;
 }
 
 let url = 'https://634ab69d33bb42dca4099305.mockapi.io/contact'
@@ -76,7 +83,7 @@ const atualizarContatos = () => {
         then(resposta => resposta.json()).
         then(body => {
             listaContatos = body;
-
+            organizaLista()
             localStorage.setItem('listaContatos', JSON.stringify(listaContatos))
             if (listaContatos !== JSON.parse(localStorage.getItem('listaContatos'))) {
                 console.log('entrou')
@@ -95,6 +102,32 @@ const atualizarContatos = () => {
             rederizaFavoritos()
         })
 }
+const organizaLista = () => {
+    if (ordemCrescente) {
+        listaContatos.sort((a, b) => {
+            if (a.nome > b.nome) {
+                return 1
+            } else if (a.nome < b.nome) {
+                return -1
+            } else {
+                return 0
+            }
+
+        })
+    } else {
+        listaContatos.sort((b, a) => {
+            if (a.nome > b.nome) {
+                return 1
+            } else if (a.nome < b.nome) {
+                return -1
+            } else {
+                return 0
+            }
+
+        })
+    }
+}
+
 const renderizaContatos = () => {
     listaContatosFiltrado = JSON.parse(localStorage.getItem('listaContatosFiltrado'))
     conteudoHtml = '';
@@ -112,11 +145,32 @@ const renderizaContatos = () => {
     })
     contatos.innerHTML = conteudoHtml
 }
+function rederizaFavoritos() {
+    favoritos = JSON.parse(localStorage.getItem('favoritos'))
+    favoritosBox.innerHTML = ''
+    if (favoritos) {
+        favoritos.forEach((contato, index) => {
+
+            favoritosBox.innerHTML += `<li class='d-flex flex-column justify-content-between'>
+            <h4> ${contato.nome} </h4> ${contato.telefone}
+            <div > 
+                <button class='bg-danger rounded text-white' onclick='deletarPessoa(${contato.id})'><i class='fa-solid fa-trash' class='botao'></i></button>
+                <button class='bg-seconndary rounded text-white' onclick='desfavoritarPessoa(${index} )'><i class='fa-solid fa-star'class='botao'></i></button>
+                <button class='bg-primary rounded text-white' onclick='editarPessoaContato(${contato.id},"favorito")'><i class='fa-solid fa-pen' class='botao'></i></button>
+            </div>
+            <hr>
+        </li>`
+
+
+
+        })
+    }
+}
 
 const favoritarPessoa = (indice) => {
     let contato = listaContatosFiltrado[indice]
-    if(favoritos===null){
-        favoritos=[]
+    if (favoritos === null) {
+        favoritos = []
     }
     favoritos.push(contato)
     localStorage.setItem('favoritos', JSON.stringify(favoritos))
@@ -126,7 +180,7 @@ const favoritarPessoa = (indice) => {
 }
 const filtrarListaContatos = () => {
     if (favoritos && favoritos.length > 0) {
-
+        console.log('fav', favoritos)
         favoritos.forEach((favorito) => {
 
             listaContatosFiltrado = listaContatosFiltrado.filter(contato => contato.id !== favorito.id)
@@ -148,14 +202,26 @@ const desfavoritarPessoa = (indice) => {
     rederizaFavoritos()
     renderizaContatos()
 }
+const ordenar = () => {
+    ordemCrescente = !ordemCrescente;
+    localStorage.setItem('ordemCrescente', JSON.stringify(ordemCrescente));
+    organizaLista();
+    atualizarContatos()
+}
 const atualizarPessoa = async (id_pessoa) => {
     let nome = novoNome;
     let telefone = novoTelefone;
-    let favoritoAtualizado = favoritos.find(o => Number(o.id) === id_pessoa)
-    let indexFav = favoritos.indexOf(favoritoAtualizado)
-    favoritos[indexFav].nome = novoNome.value;
-    favoritos[indexFav].telefone = novoTelefone.value;
-    localStorage.setItem('favoritos', JSON.stringify(favoritos))
+    if (favoritos) {
+        let favoritoAtualizado = favoritos.find(o => Number(o.id) === id_pessoa)
+        let indexFav = favoritos.indexOf(favoritoAtualizado)
+        if (indexFav > -1) {
+            favoritos[indexFav].nome = novoNome.value;
+            favoritos[indexFav].telefone = novoTelefone.value;
+            localStorage.setItem('favoritos', JSON.stringify(favoritos))
+        }
+
+    }
+
     console.log('test', JSON.parse(localStorage.getItem('favoritos')))
     atualizacaoCard.innerHTML = '<h3>Salvando contato...</h3>';
 
@@ -180,27 +246,7 @@ const atualizarPessoa = async (id_pessoa) => {
     atualizarContatos()
 
 }
-function rederizaFavoritos() {
-    favoritos = JSON.parse(localStorage.getItem('favoritos'))
-    favoritosBox.innerHTML = ''
-    if (favoritos) {
-        favoritos.forEach((contato, index) => {
 
-            favoritosBox.innerHTML += `<li class='d-flex flex-column justify-content-between'>
-            <h4> ${contato.nome} </h4> ${contato.telefone}
-            <div > 
-                <button class='bg-danger rounded text-white' onclick='deletarPessoa(${contato.id})'><i class='fa-solid fa-trash' class='botao'></i></button>
-                <button class='bg-seconndary rounded text-white' onclick='desfavoritarPessoa(${index} )'><i class='fa-solid fa-star'class='botao'></i></button>
-                <button class='bg-primary rounded text-white' onclick='editarPessoaContato(${contato.id},"favorito")'><i class='fa-solid fa-pen' class='botao'></i></button>
-            </div>
-            <hr>
-        </li>`
-
-
-
-        })
-    }
-}
 const editarPessoaContato = (id, tipo) => {
     let contatoEditavel;
     if (tipo === 'contato') {
