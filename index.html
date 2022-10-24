@@ -17,10 +17,17 @@
     <section id='telaListaContatos' class="d-flex row justify-content-center align-items-center mt-5 col-12">
         <div class="d-flex row justify-content-center align-items-center col-md-4 col-ms-4">
             <div class="card card-body">
-                <div class="d-flex justify-content-between">
-                    <h3>Lista de contatos (<span id="numeros">0</span>) </h3>
-                    <button class="text-white bg-danger rounded" onclick="logout()">Logout <i class="fa-solid fa-right-from-bracket"></i></button>
-                    <button class="text-white bg-primary rounded" onclick="ordenar()">Ordenar<h6 id="letraOrdem">A-Z</h6> <i class="fa-solid fa-bars"></i></button>
+                <div>
+                    <div class="d-flex justify-content-between">
+                        <h3>Lista de contatos (<span id="numeros">0</span>) </h3>
+                        <button class="text-white bg-danger rounded" onclick="logout()">Logout <i
+                                class="fa-solid fa-right-from-bracket"></i></button>
+                        <button class="text-white bg-primary rounded" onclick="ordenar()">Ordenar<h6 id="letraOrdem">A-Z
+                            </h6> <i class="fa-solid fa-bars"></i></button>
+                    </div>
+                    <div>
+                        <input type="text" id="pesquisa" class="col-10 mt-2 m-2 p-1"placeholder="Pesquise um contato"/><i class="fa-solid fa-search fs-3"></i>
+                    </div>
                 </div>
                 <hr>
 
@@ -31,21 +38,23 @@
                     </div>
 
                     <div class="col-3 d-grid">
-                        <button class="btn btn-outline-primary d-flex flex-row justify-content-between align-items-center" onclick="addContact()">
+                        <button
+                            class="btn btn-outline-primary d-flex flex-row justify-content-between align-items-center"
+                            onclick="addContact()">
                             Salvar <i class="fa-solid fa-floppy-disk"></i>
                         </button>
                     </div>
                 </form>
 
                 <hr>
-                <div  class="d-flex flex-column">
-                   <h3>Favoritos</h3>
-                   <div id="favoritosBox" class="d-flex flex-column">
-                    Sem contatos favoritados
-                   </div>
-                    
+                <div class="d-flex flex-column">
+                    <h3>Favoritos</h3>
+                    <div id="favoritosBox" class="d-flex flex-column">
+                        Sem contatos favoritados
+                    </div>
+
                 </div>
-                <hr/>
+                <hr />
                 <div>
                     <h3>Contatos</h3>
                     <ul id="contatos">
@@ -56,8 +65,8 @@
             </div>
         </div>
     </section>
-    <section id="atualizacaoCard" class="position-fixed top-0 d-flex   w-100" >
-        
+    <section id="atualizacaoCard" class="position-fixed top-0 d-flex   w-100">
+
 
     </section>
 

@@ -160,7 +160,7 @@ const renderizaContatos = () => {
     conteudoHtml = '';
     listaContatosFiltrado.forEach((contato, index) => {
 
-        conteudoHtml += `<li class='d-flex flex-column justify-content-between'>
+        conteudoHtml += `<li class='contatoInserido'class='d-flex flex-column justify-content-between'>
                     <h4> ${contato.nome} </h4> ${contato.telefone}
                     <div > 
                         <button class='bg-danger rounded text-white' onclick='deletarPessoa(${contato.id})'><i class='fa-solid fa-trash' class='botao'></i></button>
@@ -178,7 +178,7 @@ function rederizaFavoritos() {
     if (favoritos) {
         favoritos.forEach((contato, index) => {
 
-            favoritosBox.innerHTML += `<li class='d-flex flex-column justify-content-between'>
+            favoritosBox.innerHTML += `<li class='contatoInserido'class='d-flex flex-column justify-content-between'>
             <h4> ${contato.nome} </h4> ${contato.telefone}
             <div > 
                 <button class='bg-danger rounded text-white' onclick='deletarPessoa(${contato.id})'><i class='fa-solid fa-trash' class='botao'></i></button>
@@ -319,6 +319,19 @@ const deletarPessoa = async (id_pessoa) => {
     atualizarContatos();
 }
 
+pesquisa.addEventListener("keyup",()=>{
+     let contatosInseridos= document.querySelectorAll('.contatoInserido')
+        contatosInseridos.forEach((contato)=>{
+            if(contato.childNodes[1].innerHTML.toLowerCase().includes(pesquisa.value.toLowerCase())
+            ||contato.childNodes[2].textContent.toLowerCase().includes(pesquisa.value.toLowerCase())){
+                contato.style=""
+            }else{
+                contato.style="display:none"
+            }
+        })     
+        //    contato.childNodes[1].innerHTML local onde fica armazenado o nome 
+        // contato.childNodes[2].textContent  local onde fica armazenado o contato
+})
 
 document.getElementById("form").addEventListener("click", (event) => {
     event.preventDefault()

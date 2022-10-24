@@ -9,6 +9,6 @@
     z-index:3000;
     opacity: 100%!important;
 }
-.botao:hover{
-
+.contatoInserido{
+    list-style: none;
 }
