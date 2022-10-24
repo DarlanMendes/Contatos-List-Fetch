@@ -114,6 +114,19 @@ const organizaLista = () => {
             }
 
         })
+        if(favoritos){
+            favoritos.sort((a, b) => {
+                if (a.nome > b.nome) {
+                    return 1
+                } else if (a.nome < b.nome) {
+                    return -1
+                } else {
+                    return 0
+                }
+    
+            })
+        }
+        
     } else {
         listaContatos.sort((b, a) => {
             if (a.nome > b.nome) {
@@ -123,8 +136,22 @@ const organizaLista = () => {
             } else {
                 return 0
             }
-
         })
+        if(favoritos){
+            favoritos.sort((b, a) => {
+                if (a.nome > b.nome) {
+                    return 1
+                } else if (a.nome < b.nome) {
+                    return -1
+                } else {
+                    return 0
+                }
+    
+            })
+        }
+    }
+    if(favoritos){
+        localStorage.setItem('favoritos',JSON.stringify(favoritos))
     }
 }
 
@@ -174,9 +201,10 @@ const favoritarPessoa = (indice) => {
     }
     favoritos.push(contato)
     localStorage.setItem('favoritos', JSON.stringify(favoritos))
+    organizaLista()
     filtrarListaContatos()
-    renderizaContatos()
-    rederizaFavoritos()
+     renderizaContatos()
+     rederizaFavoritos()
 }
 const filtrarListaContatos = () => {
     if (favoritos && favoritos.length > 0) {
@@ -198,6 +226,7 @@ const desfavoritarPessoa = (indice) => {
     localStorage.setItem('listaContatosFiltrado', JSON.stringify(listaContatosFiltrado));
     favoritos.splice(indice, 1)
     localStorage.setItem('favoritos', JSON.stringify(favoritos));
+    organizaLista()
     filtrarListaContatos()
     rederizaFavoritos()
     renderizaContatos()
@@ -205,8 +234,17 @@ const desfavoritarPessoa = (indice) => {
 const ordenar = () => {
     ordemCrescente = !ordemCrescente;
     localStorage.setItem('ordemCrescente', JSON.stringify(ordemCrescente));
+    ordenaLetraBotaoCrescente()
     organizaLista();
-    atualizarContatos()
+    atualizarContatos();
+}
+const ordenaLetraBotaoCrescente=()=>{
+    let ordemLetraPosicao =JSON.parse(localStorage.getItem('ordemCrescente'))
+    if(ordemLetraPosicao){
+        letraOrdem.innerHTML='Z-A'
+    }else{
+        letraOrdem.innerHTML='A-Z'
+    }
 }
 const atualizarPessoa = async (id_pessoa) => {
     let nome = novoNome;
