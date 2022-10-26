@@ -86,6 +86,7 @@ const atualizarContatos = () => {
             listaContatos = body;
             organizaLista()
             localStorage.setItem('listaContatos', JSON.stringify(listaContatos))
+            numeros.innerHTML= listaContatos.length
             if (listaContatos !== JSON.parse(localStorage.getItem('listaContatos'))) {
                 console.log('entrou')
                 listaContatosFiltrado = listaContatos
