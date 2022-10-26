@@ -24,6 +24,7 @@ if (localStorage.getItem('ordemCrescente')) {
 }
 
 let url = 'https://634ab69d33bb42dca4099305.mockapi.io/contact'
+
 atualizacaoCard.style = "display:none!important";
 function fazerLogin() {
     if (email.value && senha.value) {
@@ -70,7 +71,7 @@ const addContact = async () => {
     atualizarContatos();
 }
 const confereSeLogado = () => {
-    let usuarioLogado = localStorage.getItem('usuarioLogado')
+    let usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'))
     if (!usuarioLogado) {
         window.location = "login.html"
     }
